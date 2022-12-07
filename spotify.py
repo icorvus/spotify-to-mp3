@@ -5,43 +5,52 @@ import os
 import re
 
 
-def handle_url(url: str) -> dict:
-    """Cleans url, splits it and returns dictionary with:
-    - type of url
-    - id of track/playlist/album
-    If url is not a valid spotify link to track, playlist or album
-    then type = "invalid"
+def handle_url(url: str) -> list:
+    """Cleans url, splits it and calls appropriate function which
+    returns a list of tracks
 
     Args:
         url (str): spotify url to track, playlist or album
 
     Returns:
-        dict: {
-            "type": "track/playlist/album/invalid",
-            "id": id of track/plalist/album, None when url invalid
-        }
+        list: list of track names
     """
     url_pattern = r"spotify.com\/(track|playlist|album)\/([A-Za-z0-9]+)"
     match = re.search(url_pattern, url)
     if match:
-        if match[1] == "track":
-            print(get_track_name(match[2]))
-        return {
-            "type": match[1],
-            "id": match[2]
-        }
-    return {
-        "type": "invalid",
-        "id": None
-    }
+        type = match[1]
+        id = match[2]
+        if type == "track":
+            return get_track_name(id)
+        if type == "playlist":
+            return get_tracks_from_playlist(id)
+        if type == "album":
+            return get_tracks_from_album(id)
+    return []
 
 
-def get_track_name(id: str) -> str:
+def get_track_name(id: str) -> list:
+    """Get track name given id of song
+
+    Args:
+        id (str): id of song
+
+    Returns:
+        list: single element list containing track name
+    """
     track = sp.track(id)
-    return f"{track['artists'][0]['name']} - {track['name']}"
+    return [f"{track['artists'][0]['name']} - {track['name']}"]
 
 
 def get_tracks_from_album(id: str) -> list:
+    """Get track names given id of album
+
+    Args:
+        id (str): id of album
+
+    Returns:
+        list: list containing track names of all songs found on album
+    """
     track_names = []
     album = sp.album_tracks(id)
     for track in album["items"]:
@@ -53,6 +62,14 @@ def get_tracks_from_album(id: str) -> list:
 
 
 def get_tracks_from_playlist(id: str) -> list:
+    """Get track names given id of playlist
+
+    Args:
+        id (str): id of playlist
+
+    Returns:
+        list: list containing track names of all songs found on playlist
+    """
     track_names = []
     playlist = sp.playlist_items(id)
     for item in playlist["items"]:
@@ -67,11 +84,8 @@ def get_tracks_from_playlist(id: str) -> list:
 load_dotenv()
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+
+# Authenticate API
 api_credentials = SpotifyClientCredentials(client_id=CLIENT_ID,
                                            client_secret=CLIENT_SECRET)
 sp = spotipy.Spotify(auth_manager=api_credentials)
-
-while True:
-    print(get_tracks_from_album(input("URL: ")))
-
-get_tracks_from_playlist("4LD3f2xerFMBetFCqt124p")
