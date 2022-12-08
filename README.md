@@ -8,7 +8,6 @@
 * [Screenshots](#screenshots)
 * [Setup](#setup)
 * [Usage](#usage)
-* [Project Status](#project-status)
 * [Room for Improvement](#room-for-improvement)
 
 ## General Information
@@ -28,3 +27,19 @@
 ## Screenshots
 [![0.png](https://i.postimg.cc/V6L0FfnT/0.png)](https://postimg.cc/sBq2jRn9)
 [![1.png](https://i.postimg.cc/3w3kK8SR/1.png)](https://postimg.cc/mP6LjsGf)
+
+## Setup
+You need to have FFMpeg installed and added to PATH on your machine 
+
+### Install python module dependencies
+```sh
+pip install -r requirements.txt
+```
+
+## Usage
+- Just put url to a playlist, album or track when asked.
+- Type 'exit' to quit the program
+
+## Room for improvements
+- GUI
+- Give user the option to select bitrate of final music file
